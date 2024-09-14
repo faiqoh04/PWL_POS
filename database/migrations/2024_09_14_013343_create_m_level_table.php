@@ -10,14 +10,6 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    // {
-    //     Schema::create('m-level', function (Blueprint $table) {
-    //         $table->id();
-    //         $table->timestamps();
-    //     });
-    // }
-    
-    // js 3 praktikum 2 
     {
         Schema::create('m_level', function (Blueprint $table) {
             $table->id('level_id');
@@ -26,11 +18,12 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('m-level');
+        Schema::dropIfExists('m_level');
     }
 };
