@@ -26,13 +26,27 @@
             <td>{{ $data->level_id }}</td> --}}
 
             {{-- PRAKTIKUM 2.3 JS 4 --}}
-                <th>Jumlah Pengguna</th>
+                {{-- <th>Jumlah Pengguna</th>
         </tr>
         <tr>
             <td>{{ $data }}</td>
                         
-        </tr>            
+        </tr>             --}}
         {{-- @endforeach --}}
+
+        {{-- JS 4 PRAKTIKUM 2.4 --}}
+
+            <th>ID</th>
+            <th>Username</th>
+            <th>Nama</th>
+            <th>ID Level Pengguna</th>
+        </tr>
+        <tr>
+            <td>{{ $data->user_id }}</td>
+            <td>{{ $data->username }}</td>
+            <td>{{ $data->nama }}</td>
+            <td>{{ $data->level_id }}</td> 
+        </tr>       
     </table>
 </body>
 </html>
