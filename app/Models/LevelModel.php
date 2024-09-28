@@ -9,13 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LevelModel extends Model
 {
-    use HasFactory;
+    // use HasFactory;
 
     protected $table = 'm_level';
     protected $primaryKey = 'level_id';
 
-    public function user(): HasMany
+    protected $fillable = ['level_id','level_kode','level_nama'];
+    public function user(): BelongsTo
     {
-        return $this->HasMany(User::class);
+        // return $this->HasMany(User::class);
+        return $this->belongsTo(usermodel::class);
     }
 }
