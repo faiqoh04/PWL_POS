@@ -1,38 +1,82 @@
 @extends('layouts.template')
 
 @section('content')
-    <div class="card">
+    <div class="card card-outline card-primary">
         <div class="card-header">
-            <h3 class="card-title">Halo Apakabar!!!</h3>
+            <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            Selamat datang semua, ini adalah halaman utama dari aplikasi ini.
-            <canvas id="sales-chart" width="400" height="200"></canvas>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                const ctx = document.getElementById('sales-chart').getContext('2d');
-                const chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                        datasets: [{
-                            label: 'Sales',
-                            data: [100, 200, 300, 400, 500],
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            </script>
+            <form method="POST" action="{{ url('barang') }}" class="form-horizontal">
+                @csrf
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Kode Barang</label>
+                    <div class="col-11">
+                        <input type="text" class="form-control" id="barang_kode" name="barang_kode"
+                            value="{{ old('barang_kode') }}" required>
+                        @error('barang_kode')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Nama Barang</label>
+                    <div class="col-11">
+                        <input type="text" class="form-control" id="barang_nama" name="barang_nama"
+                            value="{{ old('barang_nama') }}" required>
+                        @error('barang_nama')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Kategori</label>
+                    <div class="col-11">
+                        <select class="form-control" id="kategori_id" name="kategori_id" required>
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach ($kategori as $k)
+                                <option value="{{ $k->kategori_id }}" {{ old('kategori_id') == $k->kategori_id ? 'selected' : '' }}>
+                                    {{ $k->kategori_nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('kategori_id')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Harga Beli</label>
+                    <div class="col-11">
+                        <input type="number" class="form-control" id="harga_beli" name="harga_beli"
+                            value="{{ old('harga_beli') }}" required>
+                        @error('harga_beli')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Harga Jual</label>
+                    <div class="col-11">
+                        <input type="number" class="form-control" id="harga_jual" name="harga_jual"
+                            value="{{ old('harga_jual') }}" required>
+                        @error('harga_jual')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label"></label>
+                    <div class="col-11">
+                        <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                        <a class="btn btn-sm btn-default ml-1" href="{{ url('barang') }}">Kembali</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 @endsection
+@push('css')
+@endpush
+@push('js')
+@endpush
