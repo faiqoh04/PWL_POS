@@ -22,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index']);
 
     // Route untuk manajemen user
-    Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM,MNG'], function () {
+    Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM'], function () { 
         Route::get('/', [UserController::class, 'index']);
         Route::post('/list', [UserController::class, 'list']);
         Route::get('/create', [UserController::class, 'create']);
@@ -43,8 +43,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Route untuk manajemen level
-    Route::middleware(['authorize:ADM'])->group(function () {
-        Route::group(['prefix' => 'level'], function () {
+    Route::middleware(['authorize:ADM'])->group(function () { // JS 7 PRAK 2
+        Route::group(['prefix' => 'level', 'middleware' => 'authorize:ADM'], function () {
             Route::get('/', [LevelController::class, 'index']);
             Route::post('/list', [LevelController::class, 'list']);
             Route::get('/create', [LevelController::class, 'create']);
