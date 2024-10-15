@@ -66,7 +66,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Route untuk manajemen kategori
-    Route::group(['prefix' => 'kategori', 'middleware' => 'authorize:ADM,MNG'], function () {
+    Route::group(['prefix' => 'kategori', 'middleware' => 'authorize:ADM,MNG'], function () { //JS 7 PRAK 3
         Route::get('/', [KategoriController::class, 'index']);
         Route::post('/list', [KategoriController::class, 'list']);
         Route::get('/create', [KategoriController::class, 'create']);
@@ -87,7 +87,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Route untuk manajemen barang
-    Route::group(['prefix' => 'barang', 'middleware' => 'authorize:ADM,MNG'], function () {
+    Route::group(['prefix' => 'barang', 'middleware' => 'authorize:ADM,MNG'], function () { //JS 7 PRAK 3
         Route::get('/', [BarangController::class, 'index']);
         Route::post('/list', [BarangController::class, 'list']);
         Route::get('/create', [BarangController::class, 'create']);
@@ -108,7 +108,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Route untuk manajemen supplier
-    Route::group(['prefix' => 'supplier', 'middleware' => 'authorize:ADM,MNG'], function () {
+    Route::group(['prefix' => 'supplier', 'middleware' => 'authorize:ADM,MNG'], function () { //JS 7 PRAK 3
         Route::get('/', [SupplierController::class, 'index']);
         Route::post('/list', [SupplierController::class, 'list']);
         Route::get('/create', [SupplierController::class, 'create']);
