@@ -10,6 +10,7 @@ use App\Http\Controllers\StokController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 
+
 use Illuminate\Support\Facades\Route;
 
 // Mendefinisikan pola untuk parameter id
@@ -19,6 +20,10 @@ Route::pattern('id', '[0-9]+');
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+Route::get('/register', [AuthController::class, 'showRegistrationForm']);
+Route::post('/signup', [AuthController::class, 'store']);
+
 
 // Route yang memerlukan autentikasi
 Route::middleware(['auth'])->group(function () {
@@ -46,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Route untuk manajemen level
-    Route::middleware(['authorize:ADM'])->group(function () { // JS 7 PRAK 2
+    // Route::middleware(['authorize:ADM'])->group(function () { // JS 7 PRAK 2
         Route::group(['prefix' => 'level', 'middleware' => 'authorize:ADM'], function () {
             Route::get('/', [LevelController::class, 'index']);
             Route::post('/list', [LevelController::class, 'list']);
@@ -62,10 +67,11 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
 
             Route::get('/{id}', [LevelController::class, 'show']);
+            Route::get('/level/{id}', [LevelController::class, 'show'])->name('level.show');
             Route::get('/{id}/edit', [LevelController::class, 'edit']);
             Route::put('/{id}', [LevelController::class, 'update']);
             Route::delete('/{id}', [LevelController::class, 'destroy']);
-        });
+        // });
     });
 
     // Route untuk manajemen kategori
