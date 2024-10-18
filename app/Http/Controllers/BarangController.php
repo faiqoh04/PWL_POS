@@ -7,6 +7,8 @@ use App\Models\KategoriModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BarangController extends Controller
 {
@@ -250,4 +252,169 @@ class BarangController extends Controller
             return redirect('/');
         }
     }
+
+    // JS 8 PRAK 1
+    public function import()
+    {
+        return view('barang.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            // Validasi file harus berformat .xlsx dan ukuran maksimal 1MB
+            $rules = [
+                'file_barang' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            // Jika validasi gagal, kirimkan response error
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            // Ambil file dari request
+            $file = $request->file('file_barang');
+
+            // Load reader untuk file Excel
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true); // Hanya membaca data
+
+            // Load file Excel
+            $spreadsheet = $reader->load($file->getRealPath());
+
+            // Ambil sheet yang aktif
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Ambil data dari Excel dalam bentuk array
+            $data = $sheet->toArray(null, false, true, true);
+
+            // Variabel untuk menampung data yang akan diinsert
+            $insert = [];
+
+            // Jika data lebih dari 1 baris
+            if (count($data) > 1) {
+                foreach ($data as $baris => $value) {
+                    // Baris pertama adalah header, jadi dilewati
+                    if ($baris > 1) {
+                        $insert[] = [
+                            'kategori_id' => $value['A'],
+                            'barang_kode' => $value['B'],
+                            'barang_nama' => $value['C'],
+                            'harga_beli' => $value['D'],
+                            'harga_jual' => $value['E'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+
+                // Jika ada data yang valid, lakukan insert
+                if (count($insert) > 0) {
+                    // Insert data ke database, jika data sudah ada, maka diabaikan
+                    BarangModel::insertOrIgnore($insert);
+                }
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil diimport'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+
+        return redirect('/');
+    }
+
+    // JS 8 PRAK 2
+    public function export_excel()
+    {
+        // Ambil data barang yang akan diekspor
+        $barang = BarangModel::select('kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual')
+            ->orderBy('kategori_id')
+            ->with('kategori')
+            ->get();
+
+        // Load library Excel
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet(); // Ambil sheet yang aktif
+
+        // Set header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kode Barang');
+        $sheet->setCellValue('C1', 'Nama Barang');
+        $sheet->setCellValue('D1', 'Harga Beli');
+        $sheet->setCellValue('E1', 'Harga Jual');
+        $sheet->setCellValue('F1', 'Kategori');
+
+        // Bold header
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+
+        $no = 1; // Nomor data dimulai dari 1
+        $baris = 2; // Baris data dimulai dari baris ke 2
+
+        foreach ($barang as $key => $value) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $value->barang_kode);
+            $sheet->setCellValue('C' . $baris, $value->barang_nama);
+            $sheet->setCellValue('D' . $baris, $value->harga_beli);
+            $sheet->setCellValue('E' . $baris, $value->harga_jual);
+            $sheet->setCellValue('F' . $baris, $value->kategori->kategori_nama); // Ambil nama kategori
+            $baris++;
+            $no++;
+        }
+
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true); // set auto size untuk kolom
+        }
+
+        $sheet->setTitle('Data Barang'); // Set title sheet
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Barang ' . date('Y-m-d H:i:s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
+
+    }
+
+    public function export_pdf()
+    {
+        // Ambil data barang yang akan diexport
+        $barang = BarangModel::select('kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual')
+            ->orderBy('kategori_id')
+            ->orderBy('barang_kode')
+            ->with('kategori')
+            ->get();
+
+        // Menggunakan Barryvdh\DomPDF\Facade\Pdf
+        $pdf = Pdf::loadView('barang.export_pdf', ['barang' => $barang]);
+
+        // Set ukuran kertas dan orientasi
+        $pdf->setPaper('a4', 'portrait');
+
+        // Set true jika ada gambar dari URL
+        $pdf->setOption("isRemoteEnabled", true);
+
+        // Render dan tampilkan file PDF
+        return $pdf->stream('Data Barang ' . date('Y-m-d H:i:s') . '.pdf');
+    }
+
 }
