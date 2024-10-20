@@ -73,7 +73,7 @@
     <table class="border-bottom-header">
         <tr>
             <td width="15%" class="text-center">
-                <img src="{{ asset('polinemabw_logo.jpg') }}" alt="Logo" style="max-height: 80px; width: auto;">            
+                <img src="{{ asset('polinemabw_logo.jpeg') }}" >            
             </td>
             </td>
             <td width="85%">
