@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LogoutController;
+use App\Http\Controllers\Api\LevelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +20,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', App\Http\Controllers\Api\RegisterController::class)->name('register');
 Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
-
 Route::middleware('auth:api')->get('/user', function (Request $request){
     return $request->user();
 });
 Route::post('/logout', App\Http\Controllers\Api\LogoutController::class)->name('logout');
+
+Route::group(['prefix'=>'levels'], function(){
+    Route::get('/', [LevelController::class, 'index']);
+    Route::post('/', [LevelController::class, 'store']);
+    Route::get('/{level}', [LevelController::class, 'show']);
+    Route::put('/{level}', [LevelController::class, 'update']);
+    Route::delete('/{level}', [LevelController::class, 'destroy']);
+});
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
