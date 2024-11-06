@@ -11,24 +11,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
 | API Routes
-|--------------------------------------------------------------------------
-|
+|---------------------------------------------------------------------------
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
 */
 
-Route::post('/register', App\Http\Controllers\Api\RegisterController::class)->name('register');
-Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
-Route::middleware('auth:api')->get('/user', function (Request $request){
+// Register route
+Route::post('/register', RegisterController::class)->name('register');
+
+// Login route
+Route::post('/login', LoginController::class)->name('login');
+
+// User info route (authenticated)
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/logout', App\Http\Controllers\Api\LogoutController::class)->name('logout');
 
-Route::group(['prefix'=>'levels'], function(){
+// Logout route (authenticated)
+Route::post('/logout', LogoutController::class)->name('logout');
+
+// Grouping routes for 'levels'
+Route::group(['prefix' => 'levels'], function() {
     Route::get('/', [LevelController::class, 'index']);
     Route::post('/', [LevelController::class, 'store']);
     Route::get('/{level}', [LevelController::class, 'show']);
@@ -36,6 +43,7 @@ Route::group(['prefix'=>'levels'], function(){
     Route::delete('/{level}', [LevelController::class, 'destroy']);
 });
 
+// Grouping routes for 'users'
 Route::group(['prefix' => 'users'], function() {
     Route::get('/', [UserController::class, 'index']);
     Route::post('/', [UserController::class, 'store']);
@@ -44,6 +52,7 @@ Route::group(['prefix' => 'users'], function() {
     Route::delete('/{user}', [UserController::class, 'destroy']);
 });
 
+// Grouping routes for 'kategori'
 Route::group(['prefix' => 'kategori'], function() {
     Route::get('/', [KategoriController::class, 'index']);
     Route::post('/', [KategoriController::class, 'store']);
@@ -52,6 +61,7 @@ Route::group(['prefix' => 'kategori'], function() {
     Route::delete('/{kategori}', [KategoriController::class, 'destroy']);
 });
 
+// Grouping routes for 'barang'
 Route::group(['prefix' => 'barang'], function() {
     Route::get('/', [BarangController::class, 'index']);
     Route::post('/', [BarangController::class, 'store']);
@@ -59,7 +69,3 @@ Route::group(['prefix' => 'barang'], function() {
     Route::put('/{barang}', [BarangController::class, 'update']);
     Route::delete('/{barang}', [BarangController::class, 'destroy']);
 });
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
