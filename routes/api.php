@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\KategoriController;
 use App\Http\Controllers\Api\BarangController;
+use App\Http\Controllers\Api\PenjualanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +21,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// penjualan
+Route::post('penjualan', [PenjualanController::class, 'store']);
+Route::get('penjualan/{penjualan}', [PenjualanController::class, 'show']);
+
 // Register route
 Route::post('/register', RegisterController::class)->name('register');
+Route::post('/register1', RegisterController::class)->name('register1');
 
 // Login route
 Route::post('/login', LoginController::class)->name('login');

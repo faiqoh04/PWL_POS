@@ -16,7 +16,8 @@ class RegisterController extends Controller
             'username' => 'required',
             'nama' => 'required',
             'password' => 'required|min:5|confirmed', // password minimal 5 karakter dan konfirmasi
-            'level_id' => 'required'
+            'level_id' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
         // Jika validasi gagal, kirim respons error 422
@@ -24,12 +25,16 @@ class RegisterController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
+        $image = $request->file('image');
+
         // Membuat user baru dengan data yang valid
         $user = UserModel::create([
             'username' => $request->username,
             'nama' => $request->nama,
             'password' => bcrypt($request->password), // Enkripsi password
             'level_id' => $request->level_id,
+            // 'image' => $request->image, // url nya sesuai dengan nama penyimpanan di laptop
+            'image' => $image->hashName(), // urlnya hash
         ]);
 
         // Jika user berhasil dibuat, kirim respons sukses 201
