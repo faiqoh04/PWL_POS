@@ -21,10 +21,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// penjualan
-Route::post('penjualan', [PenjualanController::class, 'store']);
-Route::get('penjualan/{penjualan}', [PenjualanController::class, 'show']);
-
 // Register route
 Route::post('/register', RegisterController::class)->name('register');
 Route::post('/register1', RegisterController::class)->name('register1');
@@ -75,3 +71,7 @@ Route::group(['prefix' => 'barang'], function() {
     Route::put('/{barang}', [BarangController::class, 'update']);
     Route::delete('/{barang}', [BarangController::class, 'destroy']);
 });
+
+// penjualan
+Route::post('penjualan', [PenjualanController::class, 'store']);
+Route::get('penjualan/{penjualan}', [PenjualanController::class, 'show']);
